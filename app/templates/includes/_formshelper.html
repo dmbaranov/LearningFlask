@@ -1,0 +1,10 @@
+{% macro render_field(field, initial_class='form-control', label_class="", errors_class='invalid-feedback') %}
+  {% set is_invaild = ' is-invalid' if field.errors else '' %}
+  {{ field.label(class=label_class) }}
+  {{ field(class=initial_class + is_invaild, **kwargs)|safe }}
+  {% if field.errors %}
+    {% for error in field.errors %}
+      <div class={{ errors_class }}>{{ error }}</div>
+    {% endfor %}
+  {% endif %}
+{% endmacro %}

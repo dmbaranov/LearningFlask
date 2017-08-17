@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% set active_page = 'dashboard_page' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <h1>My posts</h1>
+  {{ render_posts_list(posts, allow_modifying=True) }}
+  <a class="btn btn-outline-success" href={{ url_for('create_post_page') }} role="button">Create new article</a>
+{% endblock %}

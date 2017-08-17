@@ -1,0 +1,46 @@
+{% set right_navigation_bar = {
+  'common': ((url_for('main_page'), 'main_page', 'Home'), (url_for('posts_list_page'), 'posts_list_page', 'Posts')),
+  'user': ((url_for('dashboard_page'), 'dashboard_page', 'Dashboard'), ),
+  'guest': ()
+} %}
+
+{% set left_navigation_bar = {
+  'common': (),
+  'user': ((url_for('logout'), 'logout_page', 'Logout'),),
+  'guest': ((url_for('login_page'), 'login_page', 'Login'), (url_for('register_page'), 'register_page', 'Register'))
+} %}
+
+{% macro render_part_items(items) %}
+  {% for href, id, caption in items %}
+    <li {% if id == active_page %} class="nav-item active" {% else %} class="nav-item" {% endif %}>
+      <a class="nav-link" href={{ href }}>{{ caption }}</a>
+    </li>
+  {% endfor %}
+{% endmacro %}
+
+{% macro render_navigation(items) %}
+  {{ render_part_items(items['common']) }}
+  {% if current_user.is_authenticated %}
+    {{ render_part_items(items['user']) }}
+  {% else %}
+    {{ render_part_items(items['guest']) }}
+  {% endif %}
+{% endmacro %}
+
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
+  <a class="navbar-brand" href="#">Megatutorial</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      {{ render_navigation(right_navigation_bar) }}
+    </ul>
+    <ul class="navbar-nav ml-auto">
+      {{ render_navigation(left_navigation_bar) }}
+    </ul>
+  </div>
+</nav>

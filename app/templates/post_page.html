@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+{% set active_page = 'post_page' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+  <div>{{ post.title }} by {{ post.author.username }} created on {{ post.create_date|dateformat }}</div>
+  <div>{{ post.content }}</div>
+{% endblock %}
