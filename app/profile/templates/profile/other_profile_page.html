@@ -1,0 +1,8 @@
+{% extends 'layout.html' %}
+{% set active_page = 'other_profile_page' %}
+
+{% block title %}{{ user.username }}'s profile{% endblock %}
+
+{% block content %}
+  <h1>This is a profile page of {{ user.username }}</h1>
+{% endblock %}

@@ -6,5 +6,5 @@
 {% block content %}
   <h1>My posts</h1>
   {{ render_posts_list(posts, allow_modifying=True) }}
-  <a class="btn btn-outline-success" href={{ url_for('create_post_page') }} role="button">Create new article</a>
+  <a class="btn btn-outline-success" href={{ url_for('post.create_post_page') }} role="button">Create new post</a>
 {% endblock %}

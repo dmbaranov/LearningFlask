@@ -1,13 +1,13 @@
 {% set right_navigation_bar = {
-  'common': ((url_for('main_page'), 'main_page', 'Home'), (url_for('posts_list_page'), 'posts_list_page', 'Posts')),
-  'user': ((url_for('dashboard_page'), 'dashboard_page', 'Dashboard'), ),
+  'common': ((url_for('main.main_page'), 'main_page', 'Home'), (url_for('main.posts_list_page'), 'posts_list_page', 'Posts')),
+  'user': ((url_for('main.dashboard_page'), 'dashboard_page', 'Dashboard'), ),
   'guest': ()
 } %}
 
 {% set left_navigation_bar = {
   'common': (),
-  'user': ((url_for('logout'), 'logout_page', 'Logout'),),
-  'guest': ((url_for('login_page'), 'login_page', 'Login'), (url_for('register_page'), 'register_page', 'Register'))
+  'user': ((url_for('profile.profile_page', username=current_user.username), 'my_profile_page', 'Profile'), (url_for('auth.logout'), 'logout_page', 'Logout')),
+  'guest': ((url_for('auth.login_page'), 'login_page', 'Login'), (url_for('auth.register_page'), 'register_page', 'Register'))
 } %}
 
 {% macro render_part_items(items) %}
@@ -30,7 +30,7 @@
 
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
-  <a class="navbar-brand" href="#">Megatutorial</a>
+  <a class="navbar-brand" href={{ url_for('main.main_page') }}>Megatutorial</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
