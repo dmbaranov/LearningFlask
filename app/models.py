@@ -1,6 +1,7 @@
-from flask.ext.login import UserMixin
+from flask_login import UserMixin
 from datetime import datetime
 from app import db
+from app.helpers import generate_session_token
 
 
 class User(db.Model, UserMixin):
@@ -11,6 +12,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), index=True, unique=True)
     password = db.Column(db.String(120))
     register_date = db.Column(db.DateTime, default=datetime.utcnow())
+    session_token = db.Column(db.String(120), default=generate_session_token()) # Make sure that this value is unique
     posts_ids = db.relationship('Post', backref='author')
 
     def __init__(self, username, email, password):
@@ -34,7 +36,7 @@ class User(db.Model, UserMixin):
         return False
 
     def get_id(self):
-        return str(self.id)
+        return str(self.session_token)
 
 
 class Post(db.Model):
@@ -50,7 +52,6 @@ class Post(db.Model):
         self.title = title
         self.content = content
         self.author = author
-        # self.author_id = author_id
 
     def __repr__(self):
         return f'Post <{self.id}>'

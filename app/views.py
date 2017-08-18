@@ -1,29 +1,21 @@
-from flask import request, render_template, flash, redirect, url_for, session, g, abort
-from flask_login import login_user, logout_user, current_user, login_required
+from flask import request, render_template, flash, redirect, url_for, abort
+from flask_login import login_user, logout_user, current_user, login_required, login_fresh, fresh_login_required, confirm_login
 from sqlalchemy import exc
 from passlib.hash import sha256_crypt
-import json
 from app import app, db, lm
 from app.forms import LoginForm, RegisterForm, PostForm
 from app.models import User, Post
-from app.helpers import is_safe_url
+from app.helpers import is_safe_url, generate_session_token
+import json
 
 
 @lm.user_loader
-def get_user(user_id):
-    return User.query.get(int(user_id))
-
-
-@app.before_request
-def before_request():
-    g.user = current_user
+def get_user(session_token):
+    return User.query.filter_by(session_token=session_token).first()
 
 
 @app.route('/')
 def main_page():
-    # user = None
-    # if hasattr(session, 'logged_in') and session['logged_in']:
-    #     user = User.query.filter_by(id=session['user_id']).first()
     return render_template('main_page.html', user=current_user)
 
 
@@ -31,15 +23,21 @@ def main_page():
 def login_page():
     form = LoginForm(request.form)
 
-    # if 'user' in g and g.user._is_authenticated:
-    if g.user is not None and g.user.is_authenticated:
+    if current_user.is_authenticated:
         return redirect(url_for('dashboard_page'))
 
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
 
+        # If this user exists in database
         if user:
+            # If his password is correct
             if sha256_crypt.verify(form.password.data, user.password):
+                # If he doesn't have a session_token yet
+                if not user.session_token:
+                    user.session_token = generate_session_token()
+                    db.session.commit()
+
                 login_user(user, remember=form.remember_me.data)
                 next_url = request.args.get('next')
 
@@ -58,6 +56,25 @@ def login_page():
     return render_template('login_page.html', form=form)
 
 
+@app.route('/relogin', methods=['GET', 'POST'])
+def relogin():
+    form = LoginForm(request.form)
+
+    if not login_fresh():
+        if (request.method == 'POST' and form.validate_on_submit()
+                and sha256_crypt.verify(form.password.data, current_user.password)):
+            confirm_login()
+            next_url = request.args.get('next')
+
+            if not is_safe_url(next_url):
+                return abort(400)
+
+            return redirect(next_url or url_for('dashboard_page'))
+
+    form.username.data = current_user.username
+    return render_template('login_page.html', form=form)
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     form = RegisterForm(request.form)
@@ -68,7 +85,6 @@ def register_page():
         password = sha256_crypt.encrypt(str(form.password.data))
 
         user = User(username=username, email=email, password=password)
-        print(user.email)
 
         try:
             db.session.add(user)
@@ -96,6 +112,7 @@ def logout():
 
 @app.route('/dashboard')
 @login_required
+@fresh_login_required
 def dashboard_page():
     posts = Post.query.filter_by(author_id=current_user.id).all()
 
@@ -108,7 +125,7 @@ def create_post_page():
     form = PostForm(request.form)
 
     if request.method == 'POST':
-        user = User.query.filter_by(id=current_user.id).first()
+        user = User.query.get(current_user.id)
         post = Post(form.title.data, form.content.data, user)
 
         db.session.add(post)
@@ -121,7 +138,7 @@ def create_post_page():
 
 @app.route('/post/<int:post_id>')
 def post_page(post_id):
-    post = Post.query.filter_by(id=post_id).first()
+    post = Post.query.get(post_id)
 
     return render_template('post_page.html', post=post)
 
@@ -130,7 +147,7 @@ def post_page(post_id):
 @login_required
 def edit_post_page(post_id):
     form = PostForm(request.form)
-    post = Post.query.filter_by(id=post_id).first()
+    post = Post.query.get(post_id)
 
     if request.method == 'POST':
         if post.author_id == current_user.id:
@@ -153,10 +170,10 @@ def edit_post_page(post_id):
 @login_required
 def delete_post():
     post_id = request.json['postId']
-    post = Post.query.filter_by(id=post_id).first()
+    post = Post.query.get(post_id)
 
     if post.author_id == current_user.id:
-        Post.query.filter_by(id=post_id).delete()
+        db.session.delete(post)
         db.session.commit()
 
         flash("Post have been successfully deleted", 'success')
@@ -173,3 +190,16 @@ def posts_list_page():
     posts = Post.query.all()
 
     return render_template('posts_list_page.html', posts=posts)
+
+
+@app.route('/test', methods=['POST'])
+def regenerate_session_token():
+    new_token = generate_session_token()
+
+    while User.query.filter_by(session_token=new_token).first():
+        new_token = generate_session_token()
+
+    current_user.session_token = str(new_token)
+    db.session.commit()
+
+    return json.dumps({'result': True})

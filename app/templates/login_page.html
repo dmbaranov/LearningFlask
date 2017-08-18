@@ -8,6 +8,7 @@
   <h1>Please sign in!</h1>
 
   <form action="" method="POST" name="login">
+    {{ form.csrf_token }}
     <div class="form-group">
       {{ render_field(form.username) }}
     </div>
@@ -16,7 +17,7 @@
     </div>
     <div class="form-check">
       <label class="form-check-label">
-        {{ form.remember_me(class="form-check-input") }}
+        {{ form.remember_me(class="form-check-input", checked='checked') }}
         Remember me
       </label>
     </div>
