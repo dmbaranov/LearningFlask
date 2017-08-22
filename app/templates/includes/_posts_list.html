@@ -5,6 +5,7 @@
         <th>ID</th>
         <th>Title</th>
         <th>Created</th>
+        <th>Author</th>
         {% if allow_modifying %}
           <th></th>
           <th></th>
@@ -19,6 +20,12 @@
           </th>
           <td>{{ post.title }}</td>
           <td>{{ post.create_date }}</td>
+          <td>
+            <a href="{{ url_for('profile.profile_page', username=post.author.username) }}">{{ post.author.username }}</a>
+            {% if post.author.avatar %}
+              <img style="width: 100px; height: 100px;" src={{ url_for('static', filename=post.author.username + '/' + post.author.avatar) }}/>
+            {% endif %}
+          </td>
           {% if allow_modifying %}
             <td>
               <a class="btn btn-primary btn-block" href={{ url_for('post.edit_post_page', post_id=post.id) }}>Edit</a>

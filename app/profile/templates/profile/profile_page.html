@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+{% set active_page = 'profile_page' %}
+
+{% block title %}Your profile{% endblock %}
+
+{% block content %}
+  <h1>Profile of the {{ user.username }}</h1>
+
+  {% if user.avatar %}
+    <img style="width: 100px; height: 100px;" src={{ url_for('static',  filename=user.username + '/' + user.avatar) }} />
+  {% endif %}
+  {% if user.last_seen %}
+    <div>{{ user.last_seen|dateformat }}</div>
+  {% endif %}
+  {% if user.about_me %}
+    <div>About: {{ user.about_me }}</div>
+  {% endif %}
+
+  <a class="btn btn-primary" href={{ url_for('profile.follow_user', user_id=user.id) }}>Follow</a>
+  <a class="btn btn-primary" href={{ url_for('profile.unfollow_user', user_id=user.id) }}>Unfollow</a>
+
+  <form method=post action="{{ url_for('profile.upload_avatar') }}" enctype=multipart/form-data>
+    <p><input type=file name=file>
+       <input type=submit value=Upload>
+  </form>
+
+
+{#  <form action="" method="POST" name="edit-profile">#}
+{#    {{ form.csrf_token }}#}
+{#    <div class="form-group">#}
+{#      {{ render_field(form.username) }}#}
+{#    </div>#}
+{#    <div class="form-group">#}
+{#      {{ render_field(form.about_me) }}#}
+{#    </div>#}
+{#    <button class="btn btn-primary">Save</button>#}
+{#  </form>#}
+
+{#  <p>#}
+{#    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">#}
+{#      Edit your profile#}
+{#    </button>#}
+{#  </p>#}
+{#  <div class="collapse" id="collapseExample">#}
+{#    <div class="card card-body">#}
+{#      <form action="" method="POST" name="edit-profile">#}
+{#        {{ form.csrf_token }}#}
+{#        <div class="form-group">#}
+{#          {{ render_field(form.username) }}#}
+{#        </div>#}
+{#        <div class="form-group">#}
+{#          {{ render_field(form.about_me) }}#}
+{#        </div>#}
+{#        <button class="btn btn-primary">Save</button>#}
+{#      </form>#}
+{#    </div>#}
+{#  </div>#}
+{% endblock %}

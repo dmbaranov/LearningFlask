@@ -7,10 +7,9 @@ from app.models import User, Post
 import json
 
 
-@post.route('/create-post', methods=['GET', 'POST'])
+@post.route('/create-post/', methods=['GET', 'POST'])
 @login_required
 def create_post_page():
-    print('here')
     form = PostForm(request.form)
 
     if request.method == 'POST':
@@ -25,15 +24,14 @@ def create_post_page():
     return render_template('post/create_post_page.html', form=form)
 
 
-@post.route('/post/<int:post_id>')
+@post.route('/post/<int:post_id>/')
 def post_page(post_id):
-    print('here')
     post = Post.query.get(post_id)
 
     return render_template('post/post_page.html', post=post)
 
 
-@post.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
+@post.route('/post/<int:post_id>/edit/', methods=['GET', 'POST'])
 @login_required
 def edit_post_page(post_id):
     form = PostForm(request.form)
@@ -56,7 +54,7 @@ def edit_post_page(post_id):
     return render_template('post/edit_post_page.html', post=post, form=form)
 
 
-@post.route('/delete-post', methods=['POST'])
+@post.route('/delete-post/', methods=['POST'])
 @login_required
 def delete_post():
     post_id = request.json['postId']

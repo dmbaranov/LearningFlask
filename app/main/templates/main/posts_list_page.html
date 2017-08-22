@@ -5,5 +5,9 @@
 
 {% block content %}
   <h1>All the existing posts</h1>
-  {{ render_posts_list(posts) }}
+  {{ render_posts_list(posts.items) }}
+
+  <a href={{ url_for('main.posts_list_page', page=posts.prev_num) }} class="btn btn-primary btn-lg {% if not posts.has_prev %}disabled {% endif %}" role="button" aria-disabled="true">Previous</a>
+  <span>{{ posts.page }}</span>
+  <a href={{ url_for('main.posts_list_page', page=posts.next_num) }} class="btn btn-primary btn-lg {% if not posts.has_next %} disabled {% endif %}" role="button" aria-disabled="true">Next</a>
 {% endblock %}

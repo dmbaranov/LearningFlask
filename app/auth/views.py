@@ -10,7 +10,7 @@ from app.helpers import generate_session_token, is_safe_url
 import json
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route('/login/', methods=['GET', 'POST'])
 def login_page():
     form = LoginForm(request.form)
 
@@ -47,7 +47,7 @@ def login_page():
     return render_template('auth/login_page.html', form=form)
 
 
-@auth.route('/register', methods=['GET', 'POST'])
+@auth.route('/register/', methods=['GET', 'POST'])
 def register_page():
     form = RegisterForm(request.form)
 
@@ -77,7 +77,7 @@ def register_page():
     return render_template('auth/register_page.html', form=form)
 
 
-@auth.route('/relogin', methods=['GET', 'POST'])
+@auth.route('/relogin/', methods=['GET', 'POST'])
 def relogin():
     form = LoginForm(request.form)
 
@@ -96,7 +96,7 @@ def relogin():
     return render_template('auth.login_page.html', form=form)
 
 
-@auth.route('/logout')
+@auth.route('/logout/')
 @login_required
 def logout():
     logout_user()
@@ -104,7 +104,7 @@ def logout():
     return redirect(url_for('main.main_page'))
 
 
-@auth.route('/regenerate-session-token', methods=['POST'])
+@auth.route('/regenerate-session-token/', methods=['POST'])
 def regenerate_session_token():
     # Use this if you want to reset user's password
     new_token = generate_session_token()

@@ -7,4 +7,7 @@
   <h1>My posts</h1>
   {{ render_posts_list(posts, allow_modifying=True) }}
   <a class="btn btn-outline-success" href={{ url_for('post.create_post_page') }} role="button">Create new post</a>
+  <hr>
+  <h1>Followed posts</h1>
+  {{ render_posts_list(followed_posts, allow_modifying=True) }}
 {% endblock %}
