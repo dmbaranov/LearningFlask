@@ -1,5 +1,7 @@
 alembic==0.9.5
+blinker==1.4
 click==6.7
+decorator==4.1.2
 Flask==0.12.2
 Flask-Login==0.4.0
 Flask-Migrate==2.1.0
@@ -12,9 +14,12 @@ Mako==1.0.7
 MarkupSafe==1.0
 passlib==1.7.1
 psycopg2==2.7.3
+pyparsing==2.2.0
 python-dateutil==2.6.1
 python-editor==1.0.3
 six==1.10.0
 SQLAlchemy==1.1.13
+SQLAlchemy-Utils==0.32.14
+validators==0.12.0
 Werkzeug==0.12.2
 WTForms==2.1

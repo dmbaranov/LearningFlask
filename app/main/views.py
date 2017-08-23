@@ -4,7 +4,6 @@ from sqlalchemy import exc
 from app import app
 from app.models import Post
 from app.main import main
-import math
 
 
 @main.route('/')
